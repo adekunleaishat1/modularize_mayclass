@@ -3,10 +3,14 @@ const app = express()
  require("dotenv").config()
 const mongoose = require("mongoose")
 const ejs = require("ejs")
+const cors = require("cors")
 const router = require("./Route/userrouter")
-app.use(express.urlencoded({extended:true}))
+app.use(cors({origin:"*"}))
+app.use(express.urlencoded({extended:true, limit:"50mb"}))
+app.use(express.json({extended:true}))
 app.set("view engine", "ejs")
 app.use("/user", router)
+
 
 
 
