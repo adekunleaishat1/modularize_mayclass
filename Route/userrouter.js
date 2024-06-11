@@ -1,13 +1,16 @@
 const express = require("express")
 const router = express.Router()
 const usermodel = require("../Model/usermodel")
-const {Signup, Login} = require("../controllers/Usercontroller")
-
-
+const {Signup, Login, verifyuser, upload} = require("../controllers/Usercontroller")
 
 
   router.post("/register", Signup)
   router.post("/login", Login)
+  router.get("/verif", verifyuser)
+  router.post("/upload", upload)
+
+
+
 // router.get("/",(req, res)=>{
 //    res.render("index")
 // })
