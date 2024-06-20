@@ -1,13 +1,17 @@
 const express = require("express")
 const router = express.Router()
 const usermodel = require("../Model/usermodel")
-const {Signup, Login, verifyuser, upload} = require("../controllers/Usercontroller")
+const uservalidation = require("../middleware/uservalidation")
+const validate = require("../middleware/validator")
+const {Signup, Login, verifyuser, upload, Forgotpassword, Resetpassword} = require("../controllers/Usercontroller")
 
 
-  router.post("/register", Signup)
+  router.post("/register", validate(uservalidation), Signup)
   router.post("/login", Login)
   router.get("/verif", verifyuser)
   router.post("/upload", upload)
+  router.post("/forgot", Forgotpassword)
+  router.post("/reset", Resetpassword)
 
 
 

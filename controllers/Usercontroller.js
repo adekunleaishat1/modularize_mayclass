@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs")
 const usermodel = require("../Model/usermodel")
 const jwt = require("jsonwebtoken")
  const cloundinary = require("../utils/cloudinary")
+ const crypto = require("crypto")
+ const {Forgotpasswordmail} = require("../utils/mailer")
 const Signup = async (req, res) =>{
      console.log(req.body)
      const {firstname, lastname, email, password} = req.body
@@ -106,8 +108,53 @@ const upload = async (req, res) =>{
   }
 }
 
+const Forgotpassword = async (req, res) =>{
+  console.log(req.body);
+  const {email} = req.body
+  try {
+    if (!email) {
+       res.status(400).send({message:"email is required", status:false})
+    }
+    const user =  await  usermodel.findOne({email})
+    console.log(user);
+       const username = user.firstname
+
+    const otps = await crypto.randomBytes(3)
+     const Otp = otps.toString("hex")
+       await Forgotpasswordmail(Otp, email, username)
+   
+      res.status(200).send({message:"otp sent successfully", status: true, Otp, email})
+    
+  } catch (error) {
+    res.status(500).send({message:error.message, status:false})
+  }
+}
+
+const Resetpassword = async (req, res) =>{
+try {
+  console.log(req.body);
+  const {email , password} = req.body
+  if (email == "" || password == "") {
+    res.status(400).send({message:"email or password", status:false})
+  }
+    const hashpassword = await bcrypt.hash(password, 10)
+ const updated = await usermodel.findOneAndUpdate(
+    {email},
+    {$set:{password: hashpassword}}
+  )
+  if (!updated) {
+    res.status(405).send({message:"unable to reset password", status:false})
+  }else{
+    return res.status(200).send({message:"password reset successful", status: true})
+  }
+
+} catch (error) {
+  console.log(error);
+  res.status(500).send({message:error.message, status:false})
+}
+}
 
 
 
 
-module.exports = {Signup, Login, verifyuser,upload}
+module.exports = {Signup, Login, verifyuser,upload, Forgotpassword, Resetpassword}
