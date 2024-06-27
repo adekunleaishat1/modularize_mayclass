@@ -17,6 +17,7 @@ app.use("/user", router)
 
 
 
+
 const uri = process.env.URI
 const connect = () =>{
     try {
@@ -34,6 +35,13 @@ connect()
 
 const port = process.env.PORT
 
-app.listen(port, ()=>{
+const connection = app.listen(port, ()=>{
    console.log(`app started at port ${port}`);
 })
+const socket = require('socket.io')
+const io = socket(connection, {
+  cors:{origin:"*"}
+})
+
+module.exports={io}
+require("./middleware/socket")
